@@ -55,6 +55,10 @@ Once this is complete, you can modify the files as you want on your development 
 I used the mbed [Online Compiler](https://developer.mbed.org/compiler/
 ) to build the source code. There are two different mbed images that BlueSync need--[`event_source`](http://developer.mbed.org/users/dishbreak/code/event_source/) and [`bluesync`](http://developer.mbed.org/users/dishbreak/code/bluesync/). 
 
+The source is available in this GitHub repo, but I recommend using the Online Compiler to import the projects.
+
+### Importing Source from Mbed Compiler ###
+
 Register an account on mbed, and visit each of the project pages here: 
 
 * [`event_source`](http://developer.mbed.org/users/dishbreak/code/event_source/)
