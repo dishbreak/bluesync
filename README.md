@@ -29,7 +29,7 @@ The BLE112 module is a surface-mount component and will need to be soldered to a
 
 ![BLE112 module soldered to breakout board](assets/ble112_soldered.jpg)
 
-You may want to purchase a FTDI breakout board in order to read data coming out of the BLE112. I used [this one](http://www.amazon.com/OSEPP-Breakout-Board-Arduino-Compatible/dp/B007JBSSGQ) from OSEPP because it has a jumper that lets it convert between 3.3V and 5V TTL, and it's got headers you can use to put it on a breadboard. SparkFun and Adafruit have boards too--any of them should work. **Just make sure it's using a [genuine FTDI chip](https://www.sparkfun.com/news/1629)**.
+You may want to purchase a FTDI breakout board in order to read data coming out of the BLE112. I used [this one](http://www.amazon.com/OSEPP-Breakout-Board-Arduino-Compatible/dp/B007JBSSGQ) from OSEPP because it has a jumper that lets it convert between 3.3V and 5V TTL, and it's got headers you can use to put it on a breadboard. SparkFun and Adafruit have boards too--any of them should work, provided that they can support the 3.3V logic that the BLE112 uses. **Just make sure it's using a [genuine FTDI chip](https://www.sparkfun.com/news/1629)**. 
 
 # Software Installation #
 
