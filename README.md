@@ -96,7 +96,7 @@ CC Debugger Pin | BLE112 Pin
 4. Verify that your CC Debugger is seen by the tool, and click *Browse*. Navigate to `<repo_directory>\ble112_firmware\gpio_write\project-ble112.bgproj`. Click `Update`.
 5. The tool should build, flash, and reset the BLE112. It's ready to go!
 
-# Hardware Setup # 
+# Hardware Setup #
 
 When I initally built out this experiment, I built it all on a single breadboard, like so:
 
