@@ -18,7 +18,7 @@ Time synchronization of wireless nodes is an active area of research.
 While there are many solutions available, time synchronization solutions
 using *commercially available radio technology* such as Wi-Fi or
 Bluetooth LE are less common. Some solutions, such as Flooding Time
-Synchronization Protocol @maroti2004flooding use platforms dedicated
+Synchronization Protocol use platforms dedicated
 specifically for research, such as the Mica2 mote. Other solutions, such
 as the Sonos SonosNet, use a proprietary wireless networking technology.
 In order for IoT to become fully realized, manufacturers need to be able
@@ -46,15 +46,15 @@ audio solutions. When a consumer installs multiple Sonos players in her
 home, she can stream music to any player in the house, or even play
 music in one (or all) zones simultaneously. The players accomplish this
 via SonosNet, a proprietary wireless protocol that builds a mesh network
-throughout the house @SonosNetExplained.
+throughout the house.
 
 The Sonos devices do use COTS 802.11 radios—the Sonos Play:3 All-in-One
 system (shown in Figure [fig:sonos-play-3]) contains a Qualcomm Atheros
 wireless card, and the system utilizes multiple-input, multiple-output
-(MIMO) technology @iFixitSonosPlay3. Sonos does not offer an official
+(MIMO) technology. Sonos does not offer an official
 API for interacting with its speakers. However, many projects provide
 unofficial APIs that can perform network discovery and control speakers
-within the network. @FastCoSonos In short, while Sonos intends to keep
+within the network. In short, while Sonos intends to keep
 SonosNet closed, it is quite easy for 802.11 devices to gain
 (unauthorized) access to the network of players.
 
@@ -65,7 +65,7 @@ a speaker or a bridge (a dedicated network node). Recently, Sonos
 introduced the option to use an existing WiFi network in a home instead
 of SonosNet, but this configuration does have some limitations, and the
 company does stress that performance is dependent on WiFi broadcast
-strength @RegisterSonos.
+strength.
 
 Though SonosNet is a proven, commercially viable networking solution, it
 does have drawbacks that would prevent it from becoming a broadly used
@@ -73,10 +73,10 @@ IoT solution. SonosNet is a proprietary technology, and there appear to
 be no plans for Sonos to license it to other manufacturers. Apart from
 this business consideration, technical limitations exist. The protocol
 does not appear to allow for duty-cycling, as nodes must keep an active
-WiFi connection at all times @SonosPowerCons. Further, it does not
+WiFi connection at all times. Further, it does not
 appear that SonosNet can "channel-hop"—the system will settle on
 2.4GHz channel 1, 6, or 11. Customers report needing to manually change
-channels in the face of interference on a single channel @forum8:online.
+channels in the face of interference on a single channel:online.
 Lastly, the 802.11 protocol is generally unsuitable for IoT devices, due
 to poor energy awareness and added bill of materials (BoM) cost.
 
@@ -121,7 +121,7 @@ clock.[fig:rbs-flowchart]](assets/rbs-flowchart.png)
 
 Reference Broadcast Synchronization (RBS) is a time synchronization
 technique where nodes locally timestamp a common, observed event (i.e.
-broadcast)@clocksyncmag. Figure [fig:rbs-flowchart] briefly
+broadcast. Figure [fig:rbs-flowchart] briefly
 describes the process of time synchronization.
 
 RBS requires a wireless network with a common broadcast channel. The two
@@ -154,7 +154,7 @@ Bluetooth Low Energy
 
 BlueSync utilizes the Bluetooth Low Energy (BLE) wireless standard for
 its communications. Originally developed by Nokia as Wibree, the
-standard is intended for low-power sensor applications @blehandbook
+standard is intended for low-power sensor applications
 [Chapter 2]. BLE has recently seen a huge uptick in popularity, becoming
 available in most smartphones and tablets. Additionally, many
 BLE-enabled sensors are now available. This is a huge differentiator for
@@ -389,7 +389,7 @@ as the BLE112 module, just in a USB form factor. The dongle opens up a
 virtual COM port and supports a serial protocol named BGAPI, enabling
 software running on a PC to communicate with BLE devices. The BlueSync
 Hub uses an unofficial Python2 implementation of the protocol called
-bglib @jrowb1:online.
+bglib:online.
 
 Raspberry Pi Model B+
 ---------------------
