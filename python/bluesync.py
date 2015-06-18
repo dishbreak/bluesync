@@ -11,7 +11,7 @@ import time
 
 
 bgapi = bglib.BGLib()
-bgapi.debug = True
+bgapi.debug = False
 ser = 0
 mbed = 0
 scanner_thread = 0
