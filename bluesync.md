@@ -3,7 +3,7 @@ Introduction
 
 The Internet of Things (IoT) is a paradigm where many “things”, embedded
 with sensors, exchange data with one another and/or a central hub to
-provide a common service or application@guardian-iot. As IoT devices and
+provide a common service or application. As IoT devices and
 applications grow in popularity, there is a need for a common source of
 time. Applications such as coordinated audio playback, video monitoring,
 and reading sensor data all process time-stamped data, and there is a
