@@ -1,0 +1,139 @@
+## Simple script that raises a GPIO pin when an advertisement comes in
+
+
+const PIN_SELECT = $01 # 0b00000001 Only Px_0
+const PIN_RAISED = 1 # timer handle
+const SCAN_STOPPED = 2 # timer handle
+const SCAN_TIMEOUT = 3 # timer handle
+const CYCLES_PER_SECOND = 32768 # number of cycles in a second (32000 for BLED112)
+const SINGLE_SHOT_TIMER = 1 # configuring a single-shot timer
+
+# events to be sent over the serial link
+const EVENT_ADV_RECV = $01 # received an advertisement while scanning
+const EVENT_SLAVE_MODE = $02 # device is in or entering slave mode
+const EVENT_MASTER_MODE = $03 # device is in or entering master mode
+const EVENT_GET_STATE = $04 # request over UART for current state of device
+const EVENT_SET_TIMESTAMP = $05 # response to EVENT_ADV_RECV
+const EVENT_OFFSET_RECV = $06 # new offset from BLE
+
+dim scanned_address(6)
+dim timestamp(4)
+dim result
+dim data_read
+dim state(1)
+
+dim buffer_len
+dim send_buffer(20) 
+dim recv_buffer(20)
+dim recv_len
+
+procedure bluesync_set_device_state(new_state, data_len, data())
+    state(0:1) = new_state 
+    buffer_len = 1
+
+    if data_len > 0 then
+        buffer_len = buffer_len + data_len
+    end if
+
+    send_buffer(0:1) = state(0:1)
+
+    if buffer_len > 1 then
+        send_buffer(1:data_len) = data(0:data_len)
+    end if
+
+    #report the new state, along with the data
+    call system_endpoint_tx(system_endpoint_uart1, buffer_len, send_buffer(0:buffer_len))
+end
+
+
+# On system boot, configure the GPIO pin, and 
+event system_boot(major, minor, patch, build, ll_version, protocol_version, hw)
+    call hardware_io_port_config_direction(1, PIN_SELECT) # Enable port 1 for output
+    call hardware_io_port_write(1, PIN_SELECT, $00) # Bring all pins low.
+
+    call system_endpoint_set_watermarks(system_endpoint_uart1, 5 , $FF)
+
+    # whitelist append
+    call system_whitelist_append("\xED\xB4\x2F\x80\x07\x00", 0)
+    call gap_set_filtering(gap_scan_policy_whitelist, gap_adv_policy_all, 0)
+
+
+    # Begin advertising service
+    call bluesync_set_device_state(EVENT_SLAVE_MODE, 0, $00)
+    call gap_set_mode(gap_general_discoverable, gap_undirected_connectable) 
+end
+
+event gap_scan_response(rssi, packet_type, sender, address_type, bond, data_len, data_data)
+    scanned_address(0:6) = sender(0:6)
+    call hardware_io_port_write(1, PIN_SELECT, $FF) # bring pin(s) high
+    call gap_end_procedure() # stop scanning after the first response.
+    call hardware_set_soft_timer(1 * CYCLES_PER_SECOND, PIN_RAISED, SINGLE_SHOT_TIMER) # set a timer to re-enable scanning
+end
+
+event connection_disconnected(handle, reason)
+    if reason != 0 then
+        #if the remote device disconnected, re-enter advertising mode
+        call gap_set_mode(gap_general_discoverable, gap_undirected_connectable)
+    end if
+end
+
+event hardware_soft_timer(handle)
+    if handle = PIN_RAISED then
+        call bluesync_set_device_state(EVENT_ADV_RECV, 6, scanned_address(0:6))
+        call hardware_io_port_write(1, PIN_SELECT, $00) # Bring all pins low.
+        call hardware_set_soft_timer(CYCLES_PER_SECOND, SCAN_STOPPED, SINGLE_SHOT_TIMER) # wait a second to ensure some quiet time.
+    end if
+
+    if handle = SCAN_STOPPED then
+        # Begin advertising service
+        call bluesync_set_device_state(EVENT_SLAVE_MODE, 0, $00)
+        call gap_set_mode(gap_general_discoverable, gap_undirected_connectable) 
+    end if
+
+    if handle = SCAN_TIMEOUT then
+        call bluesync_set_device_state(EVENT_SLAVE_MODE, 0, $00)
+        #end the current procedure
+        call gap_end_procedure()
+        # Begin advertising service
+        call gap_set_mode(gap_general_discoverable, gap_undirected_connectable) 
+    end if
+end
+
+event attributes_value(connection, reason, handle, offset, value_len, value_data)
+    if handle = c_trigger_scanning then
+        call bluesync_set_device_state(EVENT_MASTER_MODE, 0, $00)
+        call gap_end_procedure() # stop advertising
+        call connection_disconnect($00) # disconnect 
+        call gap_discover(gap_discover_generic) # Begin scanning
+        # Set a timeout one-shot timer. If the scan returns something, it will set its own
+        # one-shot timer which will negate this one.
+        call hardware_set_soft_timer(5 * CYCLES_PER_SECOND, SCAN_TIMEOUT, SINGLE_SHOT_TIMER) 
+    end if
+
+    #forward writes to this attribute over the serial link.
+    if handle = c_reference_time then
+        buffer_len = value_len
+        buffer_len = value_len + 1
+        send_buffer(0:1) = EVENT_OFFSET_RECV
+        send_buffer(1:buffer_len) = value_data(offset:buffer_len)
+        call system_endpoint_tx(system_endpoint_uart1, buffer_len, send_buffer(0:buffer_len))
+    end if
+end
+
+dim command
+event system_endpoint_watermark_rx(endpoint, data_len)
+    recv_len = data_len
+    call system_endpoint_rx(system_endpoint_uart1, recv_len)(result, recv_len, recv_buffer(0:recv_len))
+    command = recv_buffer(0:1)
+
+    # call system_endpoint_tx(system_endpoint_uart1, recv_len, recv_buffer(0:recv_len))
+
+    if command = EVENT_GET_STATE then
+        call system_endpoint_tx(system_endpoint_uart1, 1, state(0:1))
+    end if
+
+    if command = EVENT_SET_TIMESTAMP then
+        call attributes_write(c_timestamp, 0, 4, recv_buffer(1:4))
+    end if
+
+end

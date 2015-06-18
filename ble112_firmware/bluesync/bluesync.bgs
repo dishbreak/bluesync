@@ -1,0 +1,39 @@
+dim tick        # tick counter
+dim write_count
+dim offset      # offset
+
+event system_boot(major, minor, patch, build, ll_version, protocol, hw)
+    
+    offset = 0
+
+    #configure timer for 1/128th second resolution
+    call hardware_set_soft_timer(32768, 0, 0)
+
+    #put module into discoverable/connectable mode
+    call gap_set_mode(gap_general_discoverable, gap_undirected_connectable)
+
+    
+    #enable interrupts
+    call hardware_io_port_config_irq(1, 64, 0)
+
+    call system_endpoint_tx(system_endpoint_uart1, 11, "\r\nbooted!\r\n")
+
+end
+
+event connection_disconnected(handle, result)
+    #put module into discoverable/connectable mode
+    call gap_set_mode(gap_general_discoverable, gap_undirected_connectable)
+end
+
+event hardware_soft_timer(handle)
+    
+    #incrememt tick
+    tick = tick + 1
+
+    call attributes_write(c_timestamp, 0, 4, tick+offset) 
+end
+
+event hardware_io_port_status(timestamp, port, irq, state) 
+    call system_endpoint_tx(system_endpoint_uart1, 11, "Got GPIO!\r\n")
+    call attributes_write(c_reference_time, 0, 4, tick)
+end

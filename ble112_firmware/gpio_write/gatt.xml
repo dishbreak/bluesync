@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<configuration>
+
+    <!-- 1800: org.bluetooth.service.generic_access -->
+    <service uuid="1800" id="generic_access">
+        <description>Generic Access</description>
+
+        <!-- 2A00: org.bluetooth.characteristic.gap.device_name -->
+        <characteristic uuid="2A00" id="c_device_name">
+            <description>Device Name</description>
+            <properties read="true" const="true" />
+            <!-- It's a good idea to keep this <= 19 characters, for proper display on iOS -->
+            <value>BlueSync</value>
+        </characteristic>
+
+        <!-- 2A01: org.bluetooth.characteristic.gap.appearance -->
+        <characteristic uuid="2A01" id="c_appearance">
+            <description>Appearance</description>
+            <properties read="true" const="true" />
+            <value type="hex">0002</value>
+        </characteristic>
+        
+    </service>
+
+    <!-- 180A: org.bluetooth.service.device_information -->
+    <service uuid="180A" id="device_information">
+        <description>Device Information</description>
+    
+        <!-- 2A29: org.bluetooth.characteristic.manufacturer_name_string -->
+        <characteristic uuid="2A29" id="c_manufacturer_name">
+            <description>Manufacturer Name</description>
+            <properties read="true" const="true" />
+            <value>Bluegiga</value>
+        </characteristic>
+
+        <!-- 2A24: org.bluetooth.characteristic.model_number_string -->
+        <characteristic uuid="2A24" id="c_model_number">
+            <description>Model Number</description>
+            <properties read="true" const="true" />
+            <value>BGT-UART-ECHO</value>
+        </characteristic>
+        
+    </service>
+
+    <service uuid="86677435-2003-4824-afb3-96d9f7b4b892" id="bluesync">
+        <description>BlueSync Service</description>
+
+        <characteristic uuid="63d449aa-929d-4ba0-922b-deb98f71166e" id="c_timestamp">
+            <description>Timestamp</description>
+            <properties read="true" write="false" const="false"/>
+            <value length="4" type="hex"/>
+        </characteristic>
+
+        <characteristic uuid="e8eccb9a-904b-4ccd-a8c7-352e9a2f4804" id="c_trigger_scanning">
+            <description>Trigger Scanning</description>
+            <properties read="false" write="true" const="false"/>
+            <value length="1" type="hex"/>
+        </characteristic>
+
+        <characteristic uuid="33d93b4a-9eca-42fc-b994-2cf5ebc44f1d" id="c_reference_time">
+            <description>Ref Time</description>
+            <properties read="true" write="true" const="false"/>
+            <value length="4" type="hex">00000000</value>
+        </characteristic>
+
+    </service>
+
+</configuration>
